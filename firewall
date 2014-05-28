@@ -1,0 +1,71 @@
+#!/bin/bash
+
+IPT=$(which iptables)
+
+tcp_ports_in=(22 80)
+tcp_ports_out=(22 80)
+udp_ports_in=(53)
+udp_ports_out=()
+
+# Always set policies to allow before flushing
+$IPT -P INPUT ACCEPT
+$IPT -P FORWARD ACCEPT
+$IPT -P OUTPUT ACCEPT
+
+echo ""
+echo "Flushing Existing Rules"
+echo "-----------------------"
+$IPT -F; echo -e "Rules Flushed [ \e[32mDONE\e[39m ]"
+sleep 1; echo ""
+
+echo "Allowing Localhost"
+echo "------------------"
+$IPT -A INPUT -i lo -j ACCEPT
+$IPT -A OUTPUT -o lo -j ACCEPT
+echo -e "Localhost IN/OUT [ \e[32mDONE\e[39m ]"
+sleep 1; echo ""
+
+echo "Setting ICMP Rules"
+echo "------------------"
+$IPT -A INPUT -p icmp -j ACCEPT
+$IPT -A OUTPUT -p icmp -j ACCEPT
+echo -e "ICMP IN/OUT [ \e[32mDONE\e[39m ]"
+sleep 1; echo ""
+
+echo "Setting TCP Rules"
+echo "-----------------"
+for port in ${tcp_ports_in[*]}; do
+	$IPT -A INPUT -p tcp --dport $port -j ACCEPT
+	echo -e "Port $port IN [ \e[32mDONE\e[39m ]"
+	sleep 1
+done
+
+for port in ${tcp_ports_out[*]}; do
+        $IPT -A OUTPUT -p tcp --sport $port -j ACCEPT
+        echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
+        sleep 1
+done
+sleep 1; echo ""
+
+echo "Setting UDP Rules"
+echo "-----------------"
+for port in ${udp_ports_in[*]}; do
+	$IPT -A INPUT -p udp --dport $port -j ACCEPT
+	echo -e "Port $port IN [ \e[32mDONE\e[39m ]"
+	sleep 1
+done
+
+for port in ${udp_ports_out[*]}; do
+        $IPT -A OUTPUT -p udp --sport $port -j ACCEPT
+        echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
+        sleep 1
+done
+sleep 1; echo ""
+
+echo "Setting Default Policies to DROP"
+echo "--------------------------------"
+$IPT -P INPUT DROP
+$IPT -P FORWARD DROP
+$IPT -P OUTPUT DROP
+sleep 1; echo -e "Policies set to DROP [ \e[32mDONE\e[39m ]"
+echo ""
