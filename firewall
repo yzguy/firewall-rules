@@ -4,7 +4,7 @@ IPT=$(which iptables)
 
 tcp_ports_in=(22 80)
 tcp_ports_out=(22 80)
-udp_ports_in=(53)
+udp_ports_in=()
 udp_ports_out=()
 
 # Always set policies to allow before flushing
@@ -30,6 +30,13 @@ echo "------------------"
 $IPT -A INPUT -p icmp -j ACCEPT
 $IPT -A OUTPUT -p icmp -j ACCEPT
 echo -e "ICMP IN/OUT [ \e[32mDONE\e[39m ]"
+sleep 1; echo ""
+
+echo "Setting DNS Rules"
+echo "-----------------"
+$IPT -A INPUT -p udp --sport 53 -j ACCEPT
+$IPT -A OUTPUT -p udp --dport 53 -j ACCEPT
+echo -e "DNS IN/OUT [ \e[32mDONE\e[39m ]"
 sleep 1; echo ""
 
 echo "Setting TCP Rules"
