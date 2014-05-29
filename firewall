@@ -2,8 +2,8 @@
 
 IPT=$(which iptables)
 
-tcp_ports_in=(22 80)
-tcp_ports_out=(22 80)
+tcp_ports_in=()
+tcp_ports_out=()
 udp_ports_in=()
 udp_ports_out=()
 
@@ -11,6 +11,10 @@ udp_ports_out=()
 $IPT -P INPUT ACCEPT
 $IPT -P FORWARD ACCEPT
 $IPT -P OUTPUT ACCEPT
+
+# Always allow SSH
+$IPT -A INPUT -p tcp --dport 22 -j ACCEPT
+$IPT -A OUTPUT -p tcp --sport 22 -j ACCEPT
 
 echo ""
 echo "Flushing Existing Rules"
@@ -51,8 +55,7 @@ for port in ${tcp_ports_out[*]}; do
         $IPT -A OUTPUT -p tcp --sport $port -j ACCEPT
         echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
         sleep 1
-done
-sleep 1; echo ""
+done; echo ""
 
 echo "Setting UDP Rules"
 echo "-----------------"
@@ -66,8 +69,7 @@ for port in ${udp_ports_out[*]}; do
         $IPT -A OUTPUT -p udp --sport $port -j ACCEPT
         echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
         sleep 1
-done
-sleep 1; echo ""
+done; echo ""
 
 echo "Setting Default Policies to DROP"
 echo "--------------------------------"
