@@ -10,4 +10,7 @@ All you need to do is modify
 `udp_ports_in=()`
 `udp_ports_out()`
 
+Adding in the ports you wish to open in the `()`, separated by a space,
+then just run the script
+
 Localhost, ICMP, DNS, SSH are all allowed by default
