@@ -2,9 +2,9 @@
 
 IPT=$(which iptables)
 
-tcp_ports_in=()
-tcp_ports_out=()
-udp_ports_in=()
+tcp_ports_in=(53)
+tcp_ports_out=(80 443)
+udp_ports_in=(53)
 udp_ports_out=()
 
 # Always set policies to allow before flushing
@@ -18,32 +18,24 @@ echo "-----------------------"
 $IPT -F; echo -e "Rules Flushed [ \e[32mDONE\e[39m ]"
 sleep 1; echo ""
 
-# Allow in all Related or Established traffic
+# Allow in/out all Related or Established traffic
 $IPT -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+$IPT -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 # Always allow SSH
 $IPT -A INPUT -p tcp --dport 22 -j ACCEPT
 $IPT -A OUTPUT -p tcp --sport 22 -j ACCEPT
 
-echo "Allowing Localhost"
-echo "------------------"
+# Localhost Rules
 $IPT -A INPUT -i lo -j ACCEPT
 $IPT -A OUTPUT -o lo -j ACCEPT
-echo -e "Localhost IN/OUT [ \e[32mDONE\e[39m ]"
-sleep 1; echo ""
 
-echo "Setting ICMP Rules"
-echo "------------------"
+# ICMP Rules
 $IPT -A INPUT -p icmp -j ACCEPT
 $IPT -A OUTPUT -p icmp -j ACCEPT
-echo -e "ICMP IN/OUT [ \e[32mDONE\e[39m ]"
-sleep 1; echo ""
 
-echo "Setting DNS Rules"
-echo "-----------------"
-$IPT -A INPUT -p udp --sport 53 -j ACCEPT
+# DNS Rules
 $IPT -A OUTPUT -p udp --dport 53 -j ACCEPT
-echo -e "DNS IN/OUT [ \e[32mDONE\e[39m ]"
 sleep 1; echo ""
 
 echo "Setting TCP Rules"
