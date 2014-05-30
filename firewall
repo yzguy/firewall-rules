@@ -18,6 +18,9 @@ echo "-----------------------"
 $IPT -F; echo -e "Rules Flushed [ \e[32mDONE\e[39m ]"
 sleep 1; echo ""
 
+# Allow in all Related or Established traffic
+$IPT -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
 # Always allow SSH
 $IPT -A INPUT -p tcp --dport 22 -j ACCEPT
 $IPT -A OUTPUT -p tcp --sport 22 -j ACCEPT
@@ -52,8 +55,8 @@ for port in ${tcp_ports_in[*]}; do
 done
 
 for port in ${tcp_ports_out[*]}; do
-        $IPT -A OUTPUT -p tcp --sport $port -j ACCEPT
-        echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
+        $IPT -A OUTPUT -p tcp --dport $port -j ACCEPT
+	echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
         sleep 1
 done; echo ""
 
@@ -66,7 +69,7 @@ for port in ${udp_ports_in[*]}; do
 done
 
 for port in ${udp_ports_out[*]}; do
-        $IPT -A OUTPUT -p udp --sport $port -j ACCEPT
+        $IPT -A OUTPUT -p udp --dport $port -j ACCEPT
         echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
         sleep 1
 done; echo ""
