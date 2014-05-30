@@ -2,9 +2,9 @@
 
 IPT=$(which iptables)
 
-tcp_ports_in=()
-tcp_ports_out=()
-udp_ports_in=()
+tcp_ports_in=(53)
+tcp_ports_out=(80 443)
+udp_ports_in=(53)
 udp_ports_out=()
 
 # Always set policies to allow before flushing
@@ -46,28 +46,26 @@ echo "-----------------"
 for port in ${tcp_ports_in[*]}; do
 	$IPT -A INPUT -p tcp --dport $port -j ACCEPT
 	echo -e "Port $port IN [ \e[32mDONE\e[39m ]"
-	sleep 1
 done
 
 for port in ${tcp_ports_out[*]}; do
         $IPT -A OUTPUT -p tcp --dport $port -j ACCEPT
 	echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
-        sleep 1
 done; echo ""
+sleep 1
 
 echo "Setting UDP Rules"
 echo "-----------------"
 for port in ${udp_ports_in[*]}; do
 	$IPT -A INPUT -p udp --dport $port -j ACCEPT
 	echo -e "Port $port IN [ \e[32mDONE\e[39m ]"
-	sleep 1
 done
 
 for port in ${udp_ports_out[*]}; do
         $IPT -A OUTPUT -p udp --dport $port -j ACCEPT
         echo -e "Port $port OUT [ \e[32mDONE\e[39m ]"
-        sleep 1
 done; echo ""
+sleep 1
 
 echo "Setting Default Policies to DROP"
 echo "--------------------------------"
