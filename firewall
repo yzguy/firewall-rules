@@ -2,9 +2,9 @@
 
 IPT=$(which iptables)
 
-tcp_ports_in=(53)
-tcp_ports_out=(80 443)
-udp_ports_in=(53)
+tcp_ports_in=()
+tcp_ports_out=()
+udp_ports_in=()
 udp_ports_out=()
 
 # Always set policies to allow before flushing
