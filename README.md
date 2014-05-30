@@ -1,16 +1,23 @@
-firewall-rules
+Firewall-Rules
 ==============
 
-Quick and Dirty IPtables firewall script
+I wrote a quick and dirty firewall script in bash
 
-All you need to do is modify
+There are 4 lines you will ever need to modify:
+`tcp_ports_in=()`  
+`tcp_ports_out=()`  
+`udp_ports_in=()`  
+`udp_ports_out()`  
 
-`tcp_ports_in=()`
-`tcp_ports_out=()`
-`udp_ports_in=()`
-`udp_ports_out()`
+Syntax: `tcp_ports_in=(80 443)`
 
-Adding in the ports you wish to open in the `()`, separated by a space,
-then just run the script
+Ports IN are the ports that need to be opened for services on your server to be access
+`ex. Apache Webserver - TCP 80 443`
 
-Localhost, ICMP, DNS, SSH are all allowed by default
+Ports OUT are for ports that you want to be able to access
+`ex. HTTP - TCP 80`
+
+SSH is allowed by default, so you don't accidently lock yourself out
+Localhost interface, ICMP traffic, DNS outbound, are also allowed to provide basic functionality
+
+After you have added the ports you need, then just run the script.
