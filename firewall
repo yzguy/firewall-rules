@@ -7,16 +7,24 @@ tcp_ports_out=()
 udp_ports_in=()
 udp_ports_out=()
 
-# Always set policies to allow before flushing
+echo ""
+echo "Set Policies to Allow"
+echo "-----------------------"
 $IPT -P INPUT ACCEPT
 $IPT -P FORWARD ACCEPT
 $IPT -P OUTPUT ACCEPT
+echo -e "Policies Set [ \e[32mDONE\e[39m ]"
 
 echo ""
 echo "Flushing Existing Rules"
 echo "-----------------------"
 $IPT -F; echo -e "Rules Flushed [ \e[32mDONE\e[39m ]"
 sleep 1; echo ""
+
+if [ "$1" == "reset" ]
+    then
+    exit 0
+fi
 
 echo "Setting Basic Rules"
 echo "-------------------"
